@@ -13,15 +13,15 @@
 <body>
 <main class="wrap">
 <section class="hero">
-<div class="eyebrow">Consulta gratuita • INSS 2026</div>
-<h1>💰 Descubra se você tem valores de INSS para recuperar.</h1>
-<p class="lead">Verificação gratuita de descontos previdenciários. Em menos de <strong>1 minuto</strong>, descubra se o desconto de INSS realizado em seu salário pode ter ultrapassado o limite permitido pela legislação e se existem indícios de valores pagos a maior.</p>
+<div class="eyebrow">Tabela de contribuição • INSS 2026</div>
+<h1>Calculadora do desconto de INSS no contracheque</h1>
+<p class="lead">Compare o INSS descontado no seu salário com o valor calculado pelas faixas progressivas de 2026. A ferramenta mostra o cálculo faixa a faixa e aponta se o desconto ficou acima do teto de contribuição.</p>
 </section>
 
 <section class="card intro-grid">
 <div>
 <h2><span class="step">1</span>Como funciona?</h2>
-<p>Todo trabalhador possui um limite máximo de contribuição ao INSS. Em algumas situações, como erros de folha de pagamento ou múltiplos vínculos, podem ocorrer descontos superiores ao permitido pela legislação.<p>Esta calculadora faz uma verificação inicial, comparando o valor descontado em seu contracheque com o valor estimado pelas regras vigentes para identificar possíveis valores pagos a maior.</p>
+<p>Todo trabalhador possui um limite máximo de contribuição ao INSS. Em algumas situações, como erros de folha de pagamento ou múltiplos vínculos, podem ocorrer descontos superiores ao permitido pela legislação.</p><p>Esta calculadora compara o valor descontado no seu contracheque com o valor calculado pela tabela vigente (Portaria Interministerial MPS/MF nº 13, de 9 de janeiro de 2026).</p>
 </div>
 <div class="info-box"><strong>Atenção:</strong> esta ferramenta faz uma estimativa inicial. Verbas sem incidência, competências anteriores, férias, 13º salário, afastamentos e múltiplos vínculos podem exigir análise específica dos contracheques e comprovantes.</div>
 </section>
@@ -40,7 +40,7 @@
 </div>
 <div class="hint">A comparação será feita sobre a soma das remunerações e dos descontos do mesmo mês.</div>
 </div>
-<button id="calculate">🔎 Verificar se tenho valores a recuperar</button>
+<button id="calculate">Calcular</button>
 </section>
 
 <section class="card results" id="results" aria-live="polite">
@@ -52,16 +52,16 @@
 <div class="metric"><div class="k">Possível valor pago a maior</div><div class="v" id="difference">—</div></div>
 </div>
 <div class="status" id="status"><h3 id="statusTitle"></h3><div id="statusText"></div></div>
-<div class="cta" id="cta"><a id="ctaLink" href="https://wa.me/5551993986391" target="_blank" rel="noopener">📲 Solicitar análise gratuita</a></div>
+<div class="cta" id="cta"><a id="ctaLink" href="https://wa.me/5551993986391" target="_blank" rel="noopener">Falar com o escritório pelo WhatsApp</a></div>
 <h3 style="margin-top:22px">Como o valor correto foi estimado</h3>
 <div class="table-wrap"><table><thead><tr><th>Faixa progressiva</th><th>Base utilizada</th><th>Alíquota</th><th>Contribuição</th></tr></thead><tbody id="rows"></tbody></table></div>
-<div class="disclaimer">Margem técnica: diferenças de até R$ 0,05 são tratadas como arredondamento. O resultado não constitui parecer jurídico nem confirmação automática de crédito. Em caso de múltiplos vínculos, a responsabilidade de cada fonte e a forma de recuperação dependem dos documentos e da ordem dos descontos.</div>
+<div class="disclaimer">Margem técnica: diferenças de até R$ 0,05 são tratadas como arredondamento. O resultado não constitui parecer jurídico nem confirmação automática de crédito. Em caso de múltiplos vínculos, a responsabilidade de cada fonte e a forma de recuperação dependem dos documentos e da ordem dos descontos. Conteúdo informativo: não constitui consultoria jurídica nem cria relação advogado-cliente.</div>
 </section>
 
 <section class="office">
-<div>Esta calculadora é uma cortesia de</div>
-<div class="names">Leandro Zambrano – Advogado<br>Marcelo Koch – Advogado</div>
-<p>Encontrou possível desconto indevido? Podemos analisar seus contracheques, vínculos e comprovantes de recolhimento.</p>
+<div>Esta calculadora é disponibilizada por</div>
+<div class="names">Leandro Zambrano – Advogado – OAB/RS 40.534<br>Marcelo Koch – Advogado</div>
+<p>Se quiser conversar sobre o resultado, este é o contato do escritório.</p>
 <a class="whatsapp" href="https://wa.me/5551993986391" target="_blank" rel="noopener">WhatsApp: (51) 99398-6391</a>
 <div class="small">Ferramenta informativa. O atendimento e a análise documental não garantem resultado ou restituição.</div>
 </section>
@@ -73,7 +73,7 @@ const money=v=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).
 function parse(v){let s=String(v||'').trim().replace(/\s/g,'').replace(/R\$/gi,'');if(!s)return 0;if(s.includes(','))s=s.replace(/\./g,'').replace(',','.');const n=Number(s.replace(/[^0-9.-]/g,''));return Number.isFinite(n)?Math.max(0,n):0}
 function calc(gross){const base=Math.min(gross,ceiling);let total=0;const detail=bands.map(b=>{const taxable=Math.max(0,Math.min(base,b.max)-b.min),part=taxable*b.rate;total+=part;return{...b,taxable,part}});return{base,total:round(total),detail}}
 $('hasOther').addEventListener('change',()=>{$('otherFields').style.display=$('hasOther').checked?'block':'none'});
-$('calculate').addEventListener('click',()=>{const g=parse($('gross').value),w=parse($('withheld').value),other=$('hasOther').checked,og=other?parse($('otherGross').value):0,ow=other?parse($('otherWithheld').value):0;if(g<=0){alert('Informe o salário bruto ou a base previdenciária.');$('gross').focus();return}const gross=g+og,withheld=w+ow,c=calc(gross),diff=round(withheld-c.total);$('totalGross').textContent=money(gross);$('totalWithheld').textContent=money(withheld);$('correctInss').textContent=money(c.total);$('difference').textContent=(diff>0?'+ ':'')+money(diff);$('rows').innerHTML=c.detail.map((d,i)=>`<tr><td>${i===0?'Até '+money(d.max):'De '+money(d.min+.01)+' a '+money(d.max)}</td><td>${money(d.taxable)}</td><td>${pct(d.rate)}</td><td>${money(round(d.part))}</td></tr>`).join('');const status=$('status'),cta=$('cta');if(diff>0.05){status.className='status warn';$('statusTitle').textContent='⚠ Encontramos indícios de contribuição acima do limite legal';$('statusText').innerHTML=`Com base nos valores informados, você pode ter recolhido aproximadamente <strong>${money(diff)}</strong> acima do limite estimado para este mês.<br><br>Este resultado é uma estimativa inicial e deve ser confirmado mediante análise dos contracheques e demais documentos.`;cta.style.display='block';$('ctaLink').href=`https://wa.me/5551993986391?text=${encodeURIComponent('Olá, usei a Calculadora de INSS 2026. Ela apontou possível desconto excedente de '+money(diff)+' no mês. Gostaria de analisar meus contracheques.')}`;}else if(diff<-0.05){status.className='status ok';$('statusTitle').textContent='O valor retido não ultrapassa o cálculo estimado';$('statusText').innerHTML=`O desconto informado ficou <strong>${money(Math.abs(diff))}</strong> abaixo da estimativa progressiva. Isso pode decorrer de verbas sem incidência, compensação por múltiplos vínculos, arredondamentos ou outros ajustes de folha. A calculadora não identificou retenção excedente.`;cta.style.display='none';}else{status.className='status ok';$('statusTitle').textContent='✅ Nenhum indício de recolhimento excedente';$('statusText').innerHTML='Com base nas informações fornecidas, o desconto informado está compatível com a estimativa da legislação e não foram encontrados indícios de recolhimento acima do limite.';cta.style.display='none'}$('results').style.display='block';$('results').scrollIntoView({behavior:'smooth',block:'start'})});
+$('calculate').addEventListener('click',()=>{const g=parse($('gross').value),w=parse($('withheld').value),other=$('hasOther').checked,og=other?parse($('otherGross').value):0,ow=other?parse($('otherWithheld').value):0;if(g<=0){alert('Informe o salário bruto ou a base previdenciária.');$('gross').focus();return}const gross=g+og,withheld=w+ow,c=calc(gross),diff=round(withheld-c.total);$('totalGross').textContent=money(gross);$('totalWithheld').textContent=money(withheld);$('correctInss').textContent=money(c.total);$('difference').textContent=(diff>0?'+ ':'')+money(diff);$('rows').innerHTML=c.detail.map((d,i)=>`<tr><td>${i===0?'Até '+money(d.max):'De '+money(d.min+.01)+' a '+money(d.max)}</td><td>${money(d.taxable)}</td><td>${pct(d.rate)}</td><td>${money(round(d.part))}</td></tr>`).join('');const status=$('status'),cta=$('cta');if(diff>0.05){status.className='status warn';$('statusTitle').textContent='O desconto informado ficou acima do cálculo da tabela';$('statusText').innerHTML=`Com base nos valores informados, o desconto ficou aproximadamente <strong>${money(diff)}</strong> acima do valor calculado para este mês.<br><br>É uma estimativa. Verbas sem incidência, férias, 13º e outros ajustes de folha podem explicar a diferença; a confirmação depende da conferência dos contracheques.`;cta.style.display='block';$('ctaLink').href=`https://wa.me/5551993986391?text=${encodeURIComponent('Olá, usei a Calculadora de INSS 2026. Ela apontou possível desconto excedente de '+money(diff)+' no mês. Gostaria de analisar meus contracheques.')}`;}else if(diff<-0.05){status.className='status ok';$('statusTitle').textContent='O valor retido não ultrapassa o cálculo estimado';$('statusText').innerHTML=`O desconto informado ficou <strong>${money(Math.abs(diff))}</strong> abaixo da estimativa progressiva. Isso pode decorrer de verbas sem incidência, compensação por múltiplos vínculos, arredondamentos ou outros ajustes de folha. A calculadora não identificou retenção excedente.`;cta.style.display='none';}else{status.className='status ok';$('statusTitle').textContent='✅ Nenhum indício de recolhimento excedente';$('statusText').innerHTML='Com base nas informações fornecidas, o desconto informado está compatível com a estimativa da legislação e não foram encontrados indícios de recolhimento acima do limite.';cta.style.display='none'}$('results').style.display='block';$('results').scrollIntoView({behavior:'smooth',block:'start'})});
 })();
 </script>
 </body>
